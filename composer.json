@@ -1,0 +1,20 @@
+{
+    "name": "alex19pov31/UniBot",
+    "description": "",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nesterov Alexander",
+            "email": "alex19pov31@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Alex19pov31\\BitrixCli\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^7.1"
+    }
+}
