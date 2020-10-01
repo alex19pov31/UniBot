@@ -25,13 +25,22 @@ class VKProvider extends BaseProvider
     /**
      * @var string
      */
-    private $token;
+    private $confirmToken;
+    /**
+     * @var string
+     */
+    private $accessToken;
 
-    public function __construct(UserServiceInterface $userService, string $token, array $options = null)
+    public function __construct(
+        UserServiceInterface $userService,
+        string $confirmToken,
+        string $accessToken, array $options = null
+    )
     {
         parent::__construct($userService);
         $this->client = new Client();
-        $this->token = $token;
+        $this->confirmToken = $confirmToken;
+        $this->accessToken = $accessToken;
         $this->version = $options['version'] ?? static::DEFAULT_VERSION;
     }
 
@@ -44,6 +53,7 @@ class VKProvider extends BaseProvider
     {
         $data = $data ?? [];
         $data['v'] = $this->version;
+        $data['access_token'] = $this->accessToken;
         $params = http_build_query($data);
         $url = $this->getUrl($action).'?'.$params;
 
