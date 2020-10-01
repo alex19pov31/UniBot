@@ -9,8 +9,9 @@ use UniBot\Interfaces\BitrixServiceInterface;
 use UniBot\Interfaces\BotInterface;
 use UniBot\Interfaces\MessageInterface;
 use UniBot\Interfaces\ProviderInterface;
+use UniBot\Interfaces\UserServiceInterface;
 
-class BitrixChatProvider implements ProviderInterface
+class BitrixChatProvider extends BaseProvider
 {
     /**
      * @var ProviderInterface[]
@@ -57,19 +58,17 @@ class BitrixChatProvider implements ProviderInterface
      * @var BitrixServiceInterface
      */
     private $bxService;
-    /**
-     * @var BotInterface
-     */
-    private $bot;
 
     /**
      * BitrixChatProvider constructor.
+     * @param UserServiceInterface $userService
      * @param BitrixServiceInterface $bxService
      * @param string $botCode
      * @param array $options
      */
-    public function __construct($bxService, string $botCode, array $options = [])
+    public function __construct(UserServiceInterface $userService, $bxService, string $botCode, array $options = [])
     {
+        parent::__construct($userService);
         $this->bxService = $bxService;
         $this->bxBot = $bxService::getBitrixBot();
         $this->code = $botCode;
@@ -208,17 +207,5 @@ class BitrixChatProvider implements ProviderInterface
         $this->bxBot::unRegister([
             'BOT_ID' => $this->getBotId()
         ]);
-    }
-
-    public function sendMessageUser($userId, string $messageText, array $options = null): int
-    {
-        $cmMessage = $this->bxService::getCMMessage();
-        $chatId = $cmMessage::GetChatId($this->getBotId(), $userId);
-        return $this->sendMessage($chatId, $messageText, $options);
-    }
-
-    public function setBot(BotInterface $bot)
-    {
-        $this->bot = $bot;
     }
 }

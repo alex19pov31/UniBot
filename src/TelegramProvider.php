@@ -4,11 +4,9 @@ namespace UniBot;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
-use UniBot\Interfaces\BotInterface;
-use UniBot\Interfaces\EventInterface;
-use UniBot\Interfaces\ProviderInterface;
+use UniBot\Interfaces\UserServiceInterface;
 
-class TelegramProvider implements ProviderInterface
+class TelegramProvider extends BaseProvider
 {
     const BASE_URL = 'https://api.telegram.org/bot';
     /**
@@ -23,13 +21,10 @@ class TelegramProvider implements ProviderInterface
      * @var Client
      */
     private $client;
-    /**
-     * @var BotInterface
-     */
-    private $bot;
 
-    public function __construct(string $token, string $listenUrl)
+    public function __construct(UserServiceInterface $userService, string $token, string $listenUrl)
     {
+        parent::__construct($userService);
         $this->token = $token;
         $this->listenUrl = $listenUrl;
         $this->client = new Client();
@@ -63,6 +58,15 @@ class TelegramProvider implements ProviderInterface
         return 0;
     }
 
+    /**
+     * ```php
+     *  $data = json_decode(file_get_contents('php://input'), true);
+     *  $telegramProvider->update($data);
+     *  die();
+     * ```
+     * @param $data
+     * @return mixed|void
+     */
     public function update($data)
     {
         $messageText = $data['text'];
@@ -89,15 +93,5 @@ class TelegramProvider implements ProviderInterface
     public function unregister()
     {
         $this->sendRequest('deleteWebhook');
-    }
-
-    public function sendMessageUser($userId, string $messageText, array $options = null): int
-    {
-        // TODO: Implement sendMessageUser() method.
-    }
-
-    public function setBot(BotInterface $bot)
-    {
-        $this->bot = $bot;
     }
 }
