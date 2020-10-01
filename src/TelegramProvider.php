@@ -50,12 +50,18 @@ class TelegramProvider extends BaseProvider
         $options = $options ?? [];
         $options['chat_id'] = $chatId;
         $options['text'] = $messageText;
-        $this->sendRequest(
+        $resp = $this->sendRequest(
             'sendMessage',
             $options
         );
+        $body = $resp->getBody();
+        $data = json_decode($body, true);
+        $result = $data['result'];
+        if (!$result) {
+            return 0;
+        }
 
-        return 0;
+        return (int)$result['message_id'];
     }
 
     /**

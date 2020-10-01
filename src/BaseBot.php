@@ -21,6 +21,7 @@ use UniBot\Interfaces\ProviderInterface;
  * {
  *      public function update(MessageInterface $message)
  *      {
+ *          $message->isCommand();
  *          $message->answer('Доброго времени суток! Это чат-бот.');
  *      }
  *
