@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Alex19pov31\\BitrixCli\\": "src/"
+            "UniBot\\": "src/"
         }
     },
     "require": {
