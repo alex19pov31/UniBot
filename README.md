@@ -108,7 +108,7 @@ $bitrixChatProvider->register();
 $telegramProvider = new TelegramProvider($userService, 'my_token', 'https://some-url.com/webhook/');
 $telegramProvider->register();
 
-$vkProvider = new VKProvider($userService, 'my_token');
+$vkProvider = new VKProvider($userService, 'confirm_token', 'success_token');
 
 $data = json_decode(file_get_contents('php://input'), true);
 $telegramProvider->update($data); // Получаем сообщения из чата telegram
