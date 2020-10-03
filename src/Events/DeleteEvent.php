@@ -4,10 +4,10 @@
 namespace UniBot\Events;
 
 
-class DeleteChatEvent extends BaseEvent
+class DeleteEvent extends BaseEvent
 {
     public function getCode(): string
     {
-        return 'delete_chat';
+        return 'delete';
     }
 }

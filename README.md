@@ -6,14 +6,15 @@
 use UniBot\BaseBot;
 use UniBot\Interfaces\ProviderInterface;
 use UniBot\Interfaces\EventInterface;
-use UniBot\Events\InitChatEvent;
+use UniBot\Events\InitEvent;
 use UniBot\Events\MessageEvent;
+use UniBot\Events\DeleteEvent;
 
 class SimpleBot extends BaseBot
 {
      public function update(EventInterface $event)
      {
-         if ($event instanceof InitChatEvent) {
+         if ($event instanceof InitEvent) {
             $event->getMessage()->answer('Доброго времени суток! Это чат-бот.');
          }
 
@@ -25,6 +26,10 @@ class SimpleBot extends BaseBot
                 $message->answer('Ответ на сообщение...');
             }
          }
+
+        if ($event instanceof DeleteEvent) {
+            // Some logic...
+        }
      }
 
      public function execute()
