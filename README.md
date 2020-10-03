@@ -1,4 +1,4 @@
-## UniBot - унивирсальный чат-бот
+## UniBot - универсальный чат-бот
 
 Данная реализация позволяет описать бизнес-логику бота не зависимо от каналов связи. Пример бота:
 
@@ -36,7 +36,7 @@ class SimpleBot extends BaseBot
 }
 ```
 
-Работая с локальной базой пользователей неоходим отдельный сервис для идентификации пользоватей во внешних сервисах:
+Работая с локальной базой пользователей необходим отдельный сервис для идентификации пользователей во внешних сервисах:
 
 ```php
 use UniBot\TelegramProvider;
@@ -49,17 +49,17 @@ class UserService implements UserServiceInterface
      {
          // Это код для примера
          if ($provider instanceof TelegramProvider) { 
-            $user = UserModel::find(['telegram_chat_id' => $chatId]);
+            $user = UserRepository::find(['telegram_chat_id' => $chatId]);
             return $user ? $user->getId() : 0;
          }
 
          if ($provider instanceof BitrixChatProvider) {
-             $user = UserModel::find(['bitrix_chat_id' => $chatId]);
+             $user = UserRepository::find(['bitrix_chat_id' => $chatId]);
              return $user ? $user->getId() : 0;
          }
 
          if ($provider instanceof VKProvider) {
-             $user = UserModel::find(['vk_chat_id' => $chatId]);
+             $user = UserRepository::find(['vk_chat_id' => $chatId]);
              return $user ? $user->getId() : 0;
          }
 
