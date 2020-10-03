@@ -5,6 +5,7 @@ namespace UniBot;
 
 
 use UniBot\Interfaces\BotInterface;
+use UniBot\Interfaces\EventInterface;
 use UniBot\Interfaces\MessageInterface;
 use UniBot\Interfaces\ProviderInterface;
 
@@ -109,10 +110,10 @@ abstract class BaseBot implements BotInterface
     protected $providers = [];
 
     /**
-     * @param MessageInterface $message
+     * @param EventInterface $event
      * @return void
      */
-    abstract public function update(MessageInterface $message);
+    abstract public function update(EventInterface $event);
 
     /**
      * @return void

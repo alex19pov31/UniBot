@@ -5,14 +5,26 @@
 ```php
 use UniBot\BaseBot;
 use UniBot\Interfaces\ProviderInterface;
-use UniBot\Interfaces\MessageInterface;
+use UniBot\Interfaces\EventInterface;
+use UniBot\Events\InitChatEvent;
+use UniBot\Events\MessageEvent;
 
 class SimpleBot extends BaseBot
 {
-     public function update(MessageInterface $message)
+     public function update(EventInterface $event)
      {
-         $message->isCommand();
-         $message->answer('Доброго времени суток! Это чат-бот.');
+         if ($event instanceof InitChatEvent) {
+            $event->getMessage()->answer('Доброго времени суток! Это чат-бот.');
+         }
+
+         if ($event instanceof MessageEvent) {
+            $message = $event->getMessage();
+            if ($message->isCommand()) {
+                $message->answer("Ответ на команду {$message->getMessageText()}...");
+            } else {
+                $message->answer('Ответ на сообщение...');
+            }
+         }
      }
 
      public function execute()
@@ -24,7 +36,7 @@ class SimpleBot extends BaseBot
          }
 
          $bitrixProvider = $this->getProviderByCode('bitrixBot');
-         if ($telegramProvider instanceof ProviderInterface) {
+         if ($bitrixProvider instanceof ProviderInterface) {
              $bitrixProvider->sendMessageUser($userId, 'Сообщение от чат-бота в bitrix чат...');
          }
 

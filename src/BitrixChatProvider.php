@@ -4,9 +4,13 @@
 namespace UniBot;
 
 
+use UniBot\Events\DeleteChatEvent;
+use UniBot\Events\InitChatEvent;
+use UniBot\Events\MessageEvent;
 use UniBot\Interfaces\BitrixBotInterface;
 use UniBot\Interfaces\BitrixServiceInterface;
 use UniBot\Interfaces\BotInterface;
+use UniBot\Interfaces\EventInterface;
 use UniBot\Interfaces\MessageInterface;
 use UniBot\Interfaces\ProviderInterface;
 use UniBot\Interfaces\UserServiceInterface;
@@ -94,10 +98,10 @@ class BitrixChatProvider extends BaseProvider
         return null;
     }
 
-    public function updateBot(MessageInterface $message)
+    public function updateBot(EventInterface $event)
     {
         if ($this->bot instanceof BotInterface) {
-            $this->bot->update($message);
+            $this->bot->update($event);
         }
     }
 
@@ -109,12 +113,15 @@ class BitrixChatProvider extends BaseProvider
             return;
         }
 
-        $provider->updateBot(new BitrixChatMessage($provider, [
+        $message = new BitrixChatMessage($provider, [
             'message' => $messageFields['MESSAGE'],
             'chat_id' => $messageFields['DIALOG_ID'],
             'user_id' => $messageFields['FROM_USER_ID'],
             'message_id' => $messageId,
-        ]));
+        ]);
+
+        $event = new MessageEvent($messageFields, $messageFields['DIALOG_ID'], $message);
+        $provider->updateBot($event);
     }
 
     public static function onChatStart($dialogId, $joinFields)
@@ -125,7 +132,13 @@ class BitrixChatProvider extends BaseProvider
             return;
         }
 
+        $message = new BitrixChatMessage($provider, [
+            'chat_id' => $dialogId,
+            'user_id' => $joinFields['FROM_USER_ID'],
+        ]);
 
+        $event = new InitChatEvent($joinFields, $dialogId, $message);
+        $provider->updateBot($event);
     }
 
     public static function onBotDelete($botId)
@@ -134,6 +147,10 @@ class BitrixChatProvider extends BaseProvider
         if (empty($provider)) {
             return;
         }
+
+        $message = new BitrixChatMessage($provider, []);
+        $event = new DeleteChatEvent([], 0, $message);
+        $provider->updateBot($event);
     }
 
     public function sendMessage($chatId, string $messageText, array $options = null): int
@@ -150,7 +167,25 @@ class BitrixChatProvider extends BaseProvider
 
     public function update($data)
     {
-        // TODO: Implement update() method.
+        $message = new BitrixChatMessage($this, [
+            'message' => $data['MESSAGE'],
+            'chat_id' => $data['DIALOG_ID'],
+            'user_id' => $data['FROM_USER_ID'],
+            'message_id' => $data['MESSAGE_ID'],
+        ]);
+
+        switch ($data['type']) {
+            case 'init':
+                $event = new InitChatEvent($data, $data['DIALOG_ID'], $message);
+                break;
+            case 'delete':
+                $event = new DeleteChatEvent($data, $data['DIALOG_ID'], $message);
+                break;
+            default:
+                $event = new MessageEvent($data, $data['DIALOG_ID'], $message);
+        }
+
+        $this->updateBot($event);
     }
 
     protected function getBotId(): int

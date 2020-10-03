@@ -7,10 +7,10 @@ namespace UniBot\Interfaces;
 interface BotInterface
 {
     /**
-     * @param MessageInterface $message
+     * @param EventInterface $event
      * @return void
      */
-    public function update(MessageInterface $message);
+    public function update(EventInterface $event);
 
     /**
      * @return void

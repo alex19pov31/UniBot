@@ -4,6 +4,8 @@ namespace UniBot;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
+use UniBot\Events\MessageEvent;
+use UniBot\Interfaces\BotInterface;
 use UniBot\Interfaces\UserServiceInterface;
 
 class TelegramProvider extends BaseProvider
@@ -78,12 +80,18 @@ class TelegramProvider extends BaseProvider
         $messageText = $data['text'];
         $chatId = $data['chat_id'];
         $messageId = $data['message_id'];
-        $this->bot->update(new TelegramMessage($this, [
+
+        $message = new TelegramMessage($this, [
             'message' => $messageText,
             'chat_id' => $chatId,
             'user_id' => 0,
             'message_id' => $messageId,
-        ]));
+        ]);
+
+        if ($this->bot instanceof BotInterface) {
+            $event = new MessageEvent($data, $chatId, $message);
+            $this->bot->update($event);
+        }
     }
 
     public function register()

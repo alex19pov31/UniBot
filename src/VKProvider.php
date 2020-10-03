@@ -6,6 +6,7 @@ namespace UniBot;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
+use UniBot\Events\MessageEvent;
 use UniBot\Interfaces\BotInterface;
 use UniBot\Interfaces\UserServiceInterface;
 
@@ -97,7 +98,10 @@ class VKProvider extends BaseProvider
                     'message_id' => $messageId
                 ]);
 
-                $this->bot->update($message);
+                if ($this->bot instanceof BotInterface) {
+                    $event = new MessageEvent($data, $chatId, $message);
+                    $this->bot->update($event);
+                }
             }
 
             echo 'ok';
